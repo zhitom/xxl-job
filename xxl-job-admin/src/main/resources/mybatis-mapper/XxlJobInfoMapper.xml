@@ -62,7 +62,7 @@
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
@@ -76,14 +76,16 @@
 			<if test="executorHandler != null and executorHandler != ''">
 				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
 			</if>
+			<if test="1 == 1">
+				AND rownum between #{offset} and #{pagesize}
+			</if>
 		</trim>
 		ORDER BY id DESC
-		LIMIT #{offset}, #{pagesize}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
@@ -127,8 +129,8 @@
 			#{jobGroup},
 			#{jobCron},
 			#{jobDesc},
-			NOW(),
-			NOW(),
+			sysdate,
+			sysdate,
 			#{author},
 			#{alarmEmail},
 			#{executorRouteStrategy},
@@ -140,7 +142,7 @@
 			#{glueType},
 			#{glueSource},
 			#{glueRemark},
-			NOW(),
+			sysdate,
 			#{childJobId},
 			#{triggerStatus},
 			#{triggerLastTime},
@@ -154,7 +156,7 @@
 
 	<select id="loadById" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.id = #{id}
 	</select>
 
@@ -164,7 +166,7 @@
 			job_group = #{jobGroup},
 			job_cron = #{jobCron},
 			job_desc = #{jobDesc},
-			update_time = NOW(),
+			update_time = sysdate,
 			author = #{author},
 			alarm_email = #{alarmEmail},
 			executor_route_strategy = #{executorRouteStrategy},
@@ -192,7 +194,7 @@
 
 	<select id="getJobsByGroup" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.job_group = #{jobGroup}
 	</select>
 
@@ -204,7 +206,7 @@
 
 	<select id="scheduleJobQuery" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
+		FROM xxl_job_info t
 		WHERE t.trigger_status = 1
 			and t.trigger_next_time<![CDATA[ < ]]> #{maxNextTime}
 	</select>

@@ -5,7 +5,7 @@
 
 	<resultMap id="XxlJobUser" type="com.xxl.job.admin.core.model.XxlJobUser" >
 		<result column="id" property="id" />
-		<result column="username" property="username" />
+		<result column="wusername" property="username" />
 	    <result column="password" property="password" />
 	    <result column="role" property="role" />
 	    <result column="permission" property="permission" />
@@ -13,7 +13,7 @@
 
 	<sql id="Base_Column_List">
 		t.id,
-		t.username,
+		t.wusername,
 		t.password,
 		t.role,
 		t.permission
@@ -21,25 +21,25 @@
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_user AS t
+		FROM xxl_job_user t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="username != null and username != ''">
-				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
+				AND t.wusername like CONCAT(CONCAT('%', #{username}), '%')
 			</if>
 			<if test="role gt -1">
 				AND t.role = #{role}
 			</if>
 		</trim>
-		ORDER BY username ASC
+		ORDER BY wusername ASC
 		LIMIT #{offset}, #{pagesize}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM xxl_job_user AS t
+		FROM xxl_job_user t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="username != null and username != ''">
-				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
+				AND t.wusername like CONCAT(CONCAT('%', #{username}), '%')
 			</if>
 			<if test="role gt -1">
 				AND t.role = #{role}
@@ -49,13 +49,13 @@
 
 	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="XxlJobUser">
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_user AS t
-		WHERE t.username = #{username}
+		FROM xxl_job_user t
+		WHERE t.wusername = #{username}
 	</select>
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_user (
-			username,
+			wusername,
 			password,
 			role,
 			permission
