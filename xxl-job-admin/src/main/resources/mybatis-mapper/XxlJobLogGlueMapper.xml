@@ -24,21 +24,24 @@
 	</sql>
 	
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogGlue" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_logglue (
+		<selectKey resultType="int"  keyProperty="id" order="BEFORE">
+		  SELECT xxl_job_logglue_id.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO xxl_job_logglue (id,
 			job_id,
 			glue_type,
 			glue_source,
 			glue_remark,
 			add_time, 
 			update_time
-		) VALUES (
+		) VALUES (#{id},
 			#{jobId},
 			#{glueType},
 			#{glueSource},
 			#{glueRemark},
 			sysdate,
 			sysdate
-		);
+		)
 		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID() 
 		</selectKey>-->

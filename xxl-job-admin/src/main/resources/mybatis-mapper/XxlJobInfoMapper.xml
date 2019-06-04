@@ -103,7 +103,10 @@
 	</select>
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobInfo" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_info (
+		<selectKey resultType="int"  keyProperty="id" order="BEFORE">
+		  SELECT xxl_job_info_id.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO xxl_job_info (id,
 			job_group,
 			job_cron,
 			job_desc,
@@ -125,7 +128,7 @@
 			trigger_status,
 			trigger_last_time,
 			trigger_next_time
-		) VALUES (
+		) VALUES (#{id},
 			#{jobGroup},
 			#{jobCron},
 			#{jobDesc},
@@ -147,7 +150,7 @@
 			#{triggerStatus},
 			#{triggerLastTime},
 			#{triggerNextTime}
-		);
+		)
 		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()
 			/*SELECT @@IDENTITY AS id*/

@@ -120,19 +120,22 @@
 
 	
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_log (
+		<selectKey resultType="int"  keyProperty="id" order="BEFORE">
+		  SELECT xxl_job_log_id.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO xxl_job_log (id,
 			job_group,
 			job_id,
 			trigger_time,
 			trigger_code,
 			handle_code
-		) VALUES (
+		) VALUES (#{id},
 			#{jobGroup},
 			#{jobId},
 			#{triggerTime},
 			#{triggerCode},
 			#{handleCode}
-		);
+		)
 		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID() 
 		</selectKey>-->
@@ -178,14 +181,14 @@
 
     <select id="triggerCountByDay" resultType="java.util.Map" >
 		SELECT
-			DATE_FORMAT(trigger_time,'%Y-%m-%d') triggerDay,
-			COUNT(handle_code) triggerDayCount,
+			to_char(trigger_time,'yyyy-mm-dd') as triggerDay,
+			COUNT(handle_code) as triggerDayCount,
 			SUM(CASE WHEN (trigger_code in (0, 200) and handle_code = 0) then 1 else 0 end) as triggerDayCountRunning,
 			SUM(CASE WHEN handle_code = 200 then 1 else 0 end) as triggerDayCountSuc
 		FROM xxl_job_log
 		WHERE trigger_time BETWEEN #{from} and #{to}
-		GROUP BY triggerDay
-		ORDER BY triggerDay
+		GROUP BY to_char(trigger_time,'yyyy-mm-dd') 
+		ORDER BY to_char(trigger_time,'yyyy-mm-dd') 
     </select>
 
 	<delete id="clearLog" >

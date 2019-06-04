@@ -9,7 +9,7 @@
 	    <result column="title" property="title" />
 	    <result column="worder" property="order" />
 		<result column="address_type" property="addressType" />
-		<result column="address_list" property="addressList" />
+		<result column="address_list" property="addressList" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -30,13 +30,16 @@
 	<select id="findByAddressType" parameterType="java.lang.Integer" resultMap="XxlJobGroup">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_group t
-		WHERE t.address_type = #{addressType}
+		WHERE t.address_type = #{addressType,jdbcType=INTEGER}
 		ORDER BY t.worder ASC
 	</select>
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_group ( app_name, title, worder, address_type, address_list)
-		values ( #{appName}, #{title}, #{order}, #{addressType}, #{addressList});
+		<selectKey resultType="int"  keyProperty="id" order="BEFORE">
+		  SELECT xxl_job_group_id.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO xxl_job_group ( id,app_name, title, worder, address_type, address_list)
+		values (#{id},#{appName}, #{title}, #{order}, #{addressType,jdbcType=INTEGER}, #{addressList,jdbcType=VARCHAR})
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" >
@@ -44,8 +47,8 @@
 		SET app_name = #{appName},
 			title = #{title},
 			worder = #{order},
-			address_type = #{addressType},
-			address_list = #{addressList}
+			address_type = #{addressType,jdbcType=INTEGER},
+			address_list = #{addressList,jdbcType=VARCHAR}
 		WHERE id = #{id}
 	</update>
 

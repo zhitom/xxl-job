@@ -29,9 +29,12 @@
 			<if test="role gt -1">
 				AND t.role = #{role}
 			</if>
+			
+			<if test="1 == 1">
+				ROWNUM between #{offset} and #{pagesize}
+			</if>
 		</trim>
 		ORDER BY wusername ASC
-		LIMIT #{offset}, #{pagesize}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
@@ -54,17 +57,20 @@
 	</select>
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_job_user (
+		<selectKey resultType="int"  keyProperty="id" order="BEFORE">
+		  SELECT xxl_job_user_id.nextval FROM DUAL
+		</selectKey>
+		INSERT INTO xxl_job_user (id,
 			wusername,
 			password,
 			role,
 			permission
-		) VALUES (
+		) VALUES (#{id},
 			#{username},
 			#{password},
 			#{role},
 			#{permission}
-		);
+		)
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobUser" >
@@ -74,7 +80,7 @@
 				password = #{password},
 			</if>
 			role = #{role},
-			permission = #{permission}
+			permission = #{permission,jdbcType=VARCHAR}
 		WHERE id = #{id}
 	</update>
 
