@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -312,14 +313,19 @@ public class XxlJobServiceImpl implements XxlJobService {
 		int triggerCountRunningTotal = 0;
 		int triggerCountSucTotal = 0;
 		int triggerCountFailTotal = 0;
-
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//logger.warn("startDate={}, endDate={}",sdf.format(startDate), sdf.format(endDate));
 		List<Map<String, Object>> triggerCountMapAll = xxlJobLogDao.triggerCountByDay(startDate, endDate);
+		//logger.warn("triggerCountMapAll={}",triggerCountMapAll);
+		
 		if (triggerCountMapAll!=null && triggerCountMapAll.size()>0) {
 			for (Map<String, Object> item: triggerCountMapAll) {
+				if(item.get("triggerDay")==null)
+					continue;
 				String day = String.valueOf(item.get("triggerDay"));
-				int triggerDayCount = Integer.valueOf(String.valueOf(item.get("triggerDayCount")));
-				int triggerDayCountRunning = Integer.valueOf(String.valueOf(item.get("triggerDayCountRunning")));
-				int triggerDayCountSuc = Integer.valueOf(String.valueOf(item.get("triggerDayCountSuc")));
+				int triggerDayCount = Integer.valueOf(String.valueOf((item.get("triggerDayCount")==null?"0":item.get("triggerDayCount"))));
+				int triggerDayCountRunning = Integer.valueOf(String.valueOf((item.get("triggerDayCountRunning")==null?"0":item.get("triggerDayCountRunning"))));
+				int triggerDayCountSuc = Integer.valueOf(String.valueOf((item.get("triggerDayCountSuc")==null?"0":item.get("triggerDayCountSuc"))));
 				int triggerDayCountFail = triggerDayCount - triggerDayCountRunning - triggerDayCountSuc;
 
 				triggerDayList.add(day);

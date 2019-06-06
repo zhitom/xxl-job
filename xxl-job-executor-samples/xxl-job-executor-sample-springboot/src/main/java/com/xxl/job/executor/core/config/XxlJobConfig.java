@@ -1,6 +1,9 @@
 package com.xxl.job.executor.core.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
+
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +52,10 @@ public class XxlJobConfig {
         xxlJobSpringExecutor.setAccessToken(accessToken);
         xxlJobSpringExecutor.setLogPath(logPath);
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);
-
+        if(!new File(logPath).exists()) {
+        	logger.info(">>>>>>>>>>> xxl-job config init:create logPath={}",logPath);
+        	new File(logPath).mkdirs();
+        }
         return xxlJobSpringExecutor;
     }
 

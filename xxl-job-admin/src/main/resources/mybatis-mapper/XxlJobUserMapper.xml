@@ -5,21 +5,23 @@
 
 	<resultMap id="XxlJobUser" type="com.xxl.job.admin.core.model.XxlJobUser" >
 		<result column="id" property="id" />
-		<result column="wusername" property="username" />
+		<result column="username" property="username" />
 	    <result column="password" property="password" />
 	    <result column="role" property="role" />
 	    <result column="permission" property="permission" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.wusername,
-		t.password,
-		t.role,
-		t.permission
+		t.id as "id",
+		t.wusername as "username",
+		t.password as "password",
+		t.role as "role",
+		t.permission as "permission"
 	</sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
+		select a.* from (
+		select b.*,rownum rnum from (
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_user t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -29,12 +31,10 @@
 			<if test="role gt -1">
 				AND t.role = #{role}
 			</if>
-			
-			<if test="1 == 1">
-				ROWNUM between #{offset} and #{pagesize}
-			</if>
 		</trim>
 		ORDER BY wusername ASC
+		) b where rownum &lt;= #{pagesize}+#{offset}
+		) a	where rnum &gt;=#{offset}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
@@ -66,10 +66,10 @@
 			role,
 			permission
 		) VALUES (#{id},
-			#{username},
-			#{password},
+			#{username,jdbcType=VARCHAR},
+			#{password,jdbcType=VARCHAR},
 			#{role},
-			#{permission}
+			#{permission,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -77,7 +77,7 @@
 		UPDATE xxl_job_user
 		SET
 			<if test="password != null and password != ''">
-				password = #{password},
+				password = #{password,jdbcType=VARCHAR},
 			</if>
 			role = #{role},
 			permission = #{permission,jdbcType=VARCHAR}

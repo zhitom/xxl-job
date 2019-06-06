@@ -27,24 +27,26 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.job_group,
-		t.job_id,
-		t.executor_address,
-		t.executor_handler,
-		t.executor_param,
-		t.executor_sharding_param,
-		t.executor_fail_retry_count,
-		t.trigger_time,
-		t.trigger_code,
-		t.trigger_msg,
-		t.handle_time,
-		t.handle_code,
-		t.handle_msg,
-		t.alarm_status
+		t.id as "id",
+		t.job_group as "job_group",
+		t.job_id as "job_id",
+		t.executor_address as "executor_address",
+		t.executor_handler as "executor_handler",
+		t.executor_param as "executor_param",
+		t.executor_sharding_param as "executor_sharding_param",
+		t.executor_fail_retry_count as "executor_fail_retry_count",
+		t.trigger_time as "trigger_time",
+		t.trigger_code as "trigger_code",
+		t.trigger_msg as "trigger_msg",
+		t.handle_time as "handle_time",
+		t.handle_code as "handle_code",
+		t.handle_msg as "handle_msg",
+		t.alarm_status as "alarm_status"
 	</sql>
 	
 	<select id="pageList" resultMap="XxlJobLog">
+		SELECT * from (
+		select b.*,rownum rnum from (
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_log t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -73,11 +75,11 @@
 				AND t.trigger_code = 200
 				AND t.handle_code = 0
 			</if>
-			<if test="1 == 1" >
-				AND rownum BETWEEN #{offset} AND #{pagesize}
-			</if>
 		</trim>
 		ORDER BY t.trigger_time DESC
+		) b where rownum &lt;= #{pagesize}+#{offset}
+		) a	where rnum &gt;=#{offset}
+				
 	</select>
 	
 	<select id="pageListCount" resultType="int">
@@ -116,6 +118,7 @@
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_log t
 		WHERE t.id = #{id}
+		ORDER BY t.trigger_time DESC
 	</select>
 
 	
@@ -146,11 +149,11 @@
 		SET
 			trigger_time= #{triggerTime},
 			trigger_code= #{triggerCode},
-			trigger_msg= #{triggerMsg},
-			executor_address= #{executorAddress},
-			executor_handler=#{executorHandler},
-			executor_param= #{executorParam},
-			executor_sharding_param= #{executorShardingParam},
+			trigger_msg= #{triggerMsg,jdbcType=VARCHAR},
+			executor_address= #{executorAddress,jdbcType=VARCHAR},
+			executor_handler=#{executorHandler,jdbcType=VARCHAR},
+			executor_param= #{executorParam,jdbcType=VARCHAR},
+			executor_sharding_param= #{executorShardingParam,jdbcType=VARCHAR},
 			executor_fail_retry_count= #{executorFailRetryCount}
 		WHERE id= #{id}
 	</update>
@@ -160,7 +163,7 @@
 		SET 
 			handle_time= #{handleTime}, 
 			handle_code= #{handleCode},
-			handle_msg= #{handleMsg} 
+			handle_msg= #{handleMsg,jdbcType=VARCHAR} 
 		WHERE id= #{id}
 	</update>
 	
@@ -181,10 +184,10 @@
 
     <select id="triggerCountByDay" resultType="java.util.Map" >
 		SELECT
-			to_char(trigger_time,'yyyy-mm-dd') as triggerDay,
-			COUNT(handle_code) as triggerDayCount,
-			SUM(CASE WHEN (trigger_code in (0, 200) and handle_code = 0) then 1 else 0 end) as triggerDayCountRunning,
-			SUM(CASE WHEN handle_code = 200 then 1 else 0 end) as triggerDayCountSuc
+			to_char(trigger_time,'yyyy-mm-dd') as "triggerDay",
+			COUNT(handle_code) as "triggerDayCount",
+			SUM(CASE WHEN (trigger_code in (0, 200) and handle_code = 0) then 1 else 0 end) as "triggerDayCountRunning",
+			SUM(CASE WHEN handle_code = 200 then 1 else 0 end) as "triggerDayCountSuc"
 		FROM xxl_job_log
 		WHERE trigger_time BETWEEN #{from} and #{to}
 		GROUP BY to_char(trigger_time,'yyyy-mm-dd') 
@@ -227,7 +230,7 @@
 	</delete>
 
 	<select id="findFailJobLogIds" resultType="int" >
-		SELECT id FROM xxl_job_log
+		SELECT id as "id" FROM xxl_job_log
 		WHERE not(
 			(trigger_code in (0, 200) and handle_code = 0)
 			OR

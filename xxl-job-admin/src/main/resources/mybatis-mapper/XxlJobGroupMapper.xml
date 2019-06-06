@@ -7,18 +7,18 @@
 		<result column="id" property="id" />
 	    <result column="app_name" property="appName" />
 	    <result column="title" property="title" />
-	    <result column="worder" property="order" />
+	    <result column="order" property="order" />
 		<result column="address_type" property="addressType" />
 		<result column="address_list" property="addressList" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.app_name,
-		t.title,
-		t.worder,
-		t.address_type,
-		t.address_list
+		t.id as "id",
+		t.app_name as "app_name",
+		t.title as "title",
+		t.worder as "order",
+		t.address_type as "address_type",
+		t.address_list as "address_list"
 	</sql>
 
 	<select id="findAll" resultMap="XxlJobGroup">
@@ -39,13 +39,13 @@
 		  SELECT xxl_job_group_id.nextval FROM DUAL
 		</selectKey>
 		INSERT INTO xxl_job_group ( id,app_name, title, worder, address_type, address_list)
-		values (#{id},#{appName}, #{title}, #{order}, #{addressType,jdbcType=INTEGER}, #{addressList,jdbcType=VARCHAR})
+		values (#{id},#{appName,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{order}, #{addressType,jdbcType=INTEGER}, #{addressList,jdbcType=VARCHAR})
 	</insert>
 
 	<update id="update" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" >
 		UPDATE xxl_job_group
-		SET app_name = #{appName},
-			title = #{title},
+		SET app_name = #{appName,jdbcType=VARCHAR},
+			title = #{title,jdbcType=VARCHAR},
 			worder = #{order},
 			address_type = #{addressType,jdbcType=INTEGER},
 			address_list = #{addressList,jdbcType=VARCHAR}

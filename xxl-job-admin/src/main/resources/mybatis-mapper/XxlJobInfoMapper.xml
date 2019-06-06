@@ -36,31 +36,33 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.job_group,
-		t.job_cron,
-		t.job_desc,
-		t.add_time,
-		t.update_time,
-		t.author,
-		t.alarm_email,
-		t.executor_route_strategy,
-		t.executor_handler,
-		t.executor_param,
-		t.executor_block_strategy,
-		t.executor_timeout,
-		t.executor_fail_retry_count,
-		t.glue_type,
-		t.glue_source,
-		t.glue_remark,
-		t.glue_updatetime,
-		t.child_jobid,
-		t.trigger_status,
-		t.trigger_last_time,
-		t.trigger_next_time
+		t.id as "id",
+		t.job_group as "job_group",
+		t.job_cron as "job_cron",
+		t.job_desc as "job_desc",
+		t.add_time as "add_time",
+		t.update_time as "update_time",
+		t.author as "author",
+		t.alarm_email as "alarm_email",
+		t.executor_route_strategy as "executor_route_strategy",
+		t.executor_handler as "executor_handler",
+		t.executor_param as "executor_param",
+		t.executor_block_strategy as "executor_block_strategy",
+		t.executor_timeout as "executor_timeout",
+		t.executor_fail_retry_count as "executor_fail_retry_count",
+		t.glue_type as "glue_type",
+		t.glue_source as "glue_source",
+		t.glue_remark as "glue_remark",
+		t.glue_updatetime as "glue_updatetime",
+		t.child_jobid as "child_jobid",
+		t.trigger_status as "trigger_status",
+		t.trigger_last_time as "trigger_last_time",
+		t.trigger_next_time as "trigger_next_time"
 	</sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
+		select a.* from (
+		select b.*,rownum rnum from (
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_info t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -76,11 +78,10 @@
 			<if test="executorHandler != null and executorHandler != ''">
 				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
 			</if>
-			<if test="1 == 1">
-				AND rownum between #{offset} and #{pagesize}
-			</if>
 		</trim>
 		ORDER BY id DESC
+		) b where rownum &lt;= #{pagesize}+#{offset}
+		) a	where rnum &gt;=#{offset}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
@@ -130,23 +131,23 @@
 			trigger_next_time
 		) VALUES (#{id},
 			#{jobGroup},
-			#{jobCron},
-			#{jobDesc},
+			#{jobCron,jdbcType=VARCHAR},
+			#{jobDesc,jdbcType=VARCHAR},
 			sysdate,
 			sysdate,
-			#{author},
-			#{alarmEmail},
-			#{executorRouteStrategy},
-			#{executorHandler},
-			#{executorParam},
-			#{executorBlockStrategy},
+			#{author,jdbcType=VARCHAR},
+			#{alarmEmail,jdbcType=VARCHAR},
+			#{executorRouteStrategy,jdbcType=VARCHAR},
+			#{executorHandler,jdbcType=VARCHAR},
+			#{executorParam,jdbcType=VARCHAR},
+			#{executorBlockStrategy,jdbcType=VARCHAR},
 			#{executorTimeout},
 			#{executorFailRetryCount},
-			#{glueType},
-			#{glueSource},
-			#{glueRemark},
+			#{glueType,jdbcType=VARCHAR},
+			#{glueSource,jdbcType=VARCHAR},
+			#{glueRemark,jdbcType=VARCHAR},
 			sysdate,
-			#{childJobId},
+			#{childJobId,jdbcType=VARCHAR},
 			#{triggerStatus},
 			#{triggerLastTime},
 			#{triggerNextTime}
@@ -167,22 +168,22 @@
 		UPDATE xxl_job_info
 		SET
 			job_group = #{jobGroup},
-			job_cron = #{jobCron},
-			job_desc = #{jobDesc},
+			job_cron = #{jobCron,jdbcType=VARCHAR},
+			job_desc = #{jobDesc,jdbcType=VARCHAR},
 			update_time = sysdate,
-			author = #{author},
-			alarm_email = #{alarmEmail},
-			executor_route_strategy = #{executorRouteStrategy},
-			executor_handler = #{executorHandler},
-			executor_param = #{executorParam},
-			executor_block_strategy = #{executorBlockStrategy},
+			author = #{author,jdbcType=VARCHAR},
+			alarm_email = #{alarmEmail,jdbcType=VARCHAR},
+			executor_route_strategy = #{executorRouteStrategy,jdbcType=VARCHAR},
+			executor_handler = #{executorHandler,jdbcType=VARCHAR},
+			executor_param = #{executorParam,jdbcType=VARCHAR},
+			executor_block_strategy = #{executorBlockStrategy,jdbcType=VARCHAR},
 			executor_timeout = ${executorTimeout},
 			executor_fail_retry_count = ${executorFailRetryCount},
-			glue_type = #{glueType},
-			glue_source = #{glueSource},
-			glue_remark = #{glueRemark},
+			glue_type = #{glueType,jdbcType=VARCHAR},
+			glue_source = #{glueSource,jdbcType=VARCHAR},
+			glue_remark = #{glueRemark,jdbcType=VARCHAR},
 			glue_updatetime = #{glueUpdatetime},
-			child_jobid = #{childJobId},
+			child_jobid = #{childJobId,jdbcType=VARCHAR},
 			trigger_status = #{triggerStatus},
 			trigger_last_time = #{triggerLastTime},
 			trigger_next_time = #{triggerNextTime}

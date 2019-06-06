@@ -12,11 +12,11 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.registry_group,
-		t.registry_key,
-		t.registry_value,
-		t.update_time
+		t.id as "id",
+		t.registry_group as "registry_group",
+		t.registry_key as "registry_key",
+		t.registry_value as "registry_value",
+		t.update_time as "update_time"
 	</sql>
 	
 	<delete id="removeDead" parameterType="java.lang.Integer" >
@@ -33,9 +33,9 @@
     <update id="registryUpdate" >
         UPDATE xxl_job_registry
         SET update_time = sysdate
-        WHERE registry_group = #{registryGroup}
-          AND registry_key = #{registryKey}
-          AND registry_value = #{registryValue}
+        WHERE registry_group = #{registryGroup,jdbcType=VARCHAR}
+          AND registry_key = #{registryKey,jdbcType=VARCHAR}
+          AND registry_value = #{registryValue,jdbcType=VARCHAR}
     </update>
 
     <insert id="registrySave" >
@@ -43,14 +43,14 @@
 		  SELECT xxl_job_registry_id.nextval FROM DUAL
 		</selectKey>
         INSERT INTO xxl_job_registry(id, registry_group , registry_key , registry_value, update_time)
-        VALUES(#{id}, #{registryGroup}  , #{registryKey} , #{registryValue}, sysdate)
+        VALUES(#{id}, #{registryGroup,jdbcType=VARCHAR}  , #{registryKey,jdbcType=VARCHAR} , #{registryValue,jdbcType=VARCHAR}, sysdate)
     </insert>
 
 	<delete id="registryDelete" >
 		DELETE FROM xxl_job_registry
-		WHERE registry_group = #{registryGroup}
-			AND registry_key = #{registryKey}
-			AND registry_value = #{registryValue}
+		WHERE registry_group = #{registryGroup,jdbcType=VARCHAR}
+			AND registry_key = #{registryKey,jdbcType=VARCHAR}
+			AND registry_value = #{registryValue,jdbcType=VARCHAR}
 	</delete>
 
 </mapper>

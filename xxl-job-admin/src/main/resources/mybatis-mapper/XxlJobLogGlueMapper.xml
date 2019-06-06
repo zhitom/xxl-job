@@ -14,13 +14,13 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.job_id,
-		t.glue_type,
-		t.glue_source,
-		t.glue_remark,
-		t.add_time,
-		t.update_time
+		t.id as "id",
+		t.job_id as "job_id",
+		t.glue_type as "glue_type",
+		t.glue_source as "glue_source",
+		t.glue_remark as "glue_remark",
+		t.add_time as "add_time",
+		t.update_time as "update_time"
 	</sql>
 	
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogGlue" useGeneratedKeys="true" keyProperty="id" >
@@ -36,9 +36,9 @@
 			update_time
 		) VALUES (#{id},
 			#{jobId},
-			#{glueType},
-			#{glueSource},
-			#{glueRemark},
+			#{glueType,jdbcType=VARCHAR},
+			#{glueSource,jdbcType=VARCHAR},
+			#{glueRemark,jdbcType=VARCHAR},
 			sysdate,
 			sysdate
 		)
