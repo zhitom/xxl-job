@@ -37,6 +37,17 @@
 	</dependencies>
 
 	<build>
+		<resources>
+	      <resource>
+	        <targetPath>BOOT-INF/classes/</targetPath>
+	        <filtering>true</filtering>
+	        <directory>${basedir}/src/main/resources</directory>
+	        <excludes>
+	          <exclude>xxl-job-executor.properties</exclude>
+	          <exclude>log4j.xml</exclude>
+	        </excludes>
+	      </resource>
+	    </resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -48,5 +59,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
