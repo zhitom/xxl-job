@@ -41,8 +41,8 @@ public class TriggerCallbackThread {
     /**
      * callback thread
      */
-    private Thread triggerCallbackThread;
-    private Thread triggerRetryCallbackThread;
+    private Thread triggerCallbackThread=null;
+    private Thread triggerRetryCallbackThread=null;
     private volatile boolean toStop = false;
     public void start() {
 
@@ -132,6 +132,7 @@ public class TriggerCallbackThread {
     }
     public void toStop(){
         toStop = true;
+        if(triggerCallbackThread!=null) {
         // stop callback, interrupt and wait
         triggerCallbackThread.interrupt();
         try {
@@ -139,13 +140,16 @@ public class TriggerCallbackThread {
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
         }
-
+        triggerCallbackThread=null;
+        }
+        if(triggerRetryCallbackThread!=null) {
         // stop retry, interrupt and wait
         triggerRetryCallbackThread.interrupt();
         try {
             triggerRetryCallbackThread.join();
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
+        }
         }
     }
 

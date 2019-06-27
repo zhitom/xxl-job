@@ -82,7 +82,15 @@
 	        <excludes>
 	          <exclude>application.properties</exclude>
 	          <exclude>logback.xml</exclude>
+	          <exclude>static/**/*</exclude>
 	        </excludes>
+	      </resource>
+	      <resource>
+	        <filtering>false</filtering>
+	        <directory>${basedir}/src/main/resources</directory>
+	        <includes>
+	          <include>static/**/*</include>
+	        </includes>
 	      </resource>
 	    </resources>
 		<plugins>
