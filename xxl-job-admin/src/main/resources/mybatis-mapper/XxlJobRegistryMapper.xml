@@ -21,13 +21,13 @@
 	
 	<delete id="removeDead" parameterType="java.lang.Integer" >
 		DELETE FROM xxl_job_registry
-		WHERE update_time <![CDATA[ < ]]> sysdate+numtodsinterval(#{timeout},'second')
+		WHERE update_time <![CDATA[ < ]]> sysdate-numtodsinterval(#{timeout},'second')
 	</delete>
 
 	<select id="findAll" parameterType="java.lang.Integer" resultMap="XxlJobRegistry">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_registry t
-		WHERE t.update_time <![CDATA[ > ]]> sysdate+numtodsinterval(#{timeout},'second')
+		WHERE t.update_time <![CDATA[ > ]]> sysdate-numtodsinterval(#{timeout},'second')
 	</select>
 
     <update id="registryUpdate" >
